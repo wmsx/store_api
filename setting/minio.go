@@ -13,12 +13,12 @@ var (
 )
 
 type Minio struct {
-	Endpoint        string
-	AccessKey       string
-	SecretAccessKey string
+	Endpoint        string `json:"endpoint"`
+	AccessKey       string `json:"access_key"`
+	SecretAccessKey string `json:"secret_access_key"`
 }
 
-func SetUpMinio(appName, env string) error {
+func setUpMinio(appName, env string) error {
 	sourceUrl := XConfURL
 	if env == "dev" {
 		sourceUrl = DevXConfURL
@@ -28,17 +28,20 @@ func SetUpMinio(appName, env string) error {
 		config.WithSource(source.NewSource(appName, env, MinIONamespace, source.WithURL(sourceUrl))),
 	)
 	if err != nil {
-		log.Error("获取db配置失败")
+		log.Error("获取minio配置失败")
 		return err
 	}
 	err = minioConfig.Scan(&MinIOSetting)
 	if err != nil {
-		log.Error("获取db配置失败")
+		log.Error("获取minio配置失败")
 		return err
 	}
+
+	log.Info("初始化minio配置: ", MinIOSetting)
+
 	minioWatcher, err := minioConfig.Watch()
 	if err != nil {
-		log.Error("db配置watch失败")
+		log.Error("minio配置watch失败")
 		return err
 	}
 
