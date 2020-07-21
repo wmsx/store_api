@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/micro/go-micro/v2/client"
@@ -43,8 +42,10 @@ func (s *StoreHandler) UploadAvatar(c *gin.Context) {
 		app.LogicErrorResponse("参数错误")
 		return
 	}
+	defer file.Close()
 
-	mengerId, err := strconv.ParseInt(c.GetHeader("id"), 10, 64)
+
+	mengerId, err := strconv.ParseInt(c.GetHeader("uid"), 10, 64)
 	if err != nil {
 		app.ServerErrorResponse()
 		return
@@ -52,6 +53,7 @@ func (s *StoreHandler) UploadAvatar(c *gin.Context) {
 
 	objectName := fmt.Sprintf("%d_%d%s", mengerId, time.Now().Unix(), path.Ext(header.Filename))
 	if err = UploadFile(c, AvatarBulk, objectName, header.Size, file); err != nil {
+		log.Error("上传头像失败 err: ", err)
 		app.ServerErrorResponse()
 		return
 	}
@@ -77,7 +79,7 @@ func (s *StoreHandler) UploadFiles(c *gin.Context) {
 	category := formData.Value["category"][0]
 	headers := formData.File["files"]
 
-	mengerId, err := strconv.ParseInt(c.GetHeader("id"), 10, 64)
+	mengerId, err := strconv.ParseInt(c.GetHeader("uid"), 10, 64)
 	if err != nil {
 		app.ServerErrorResponse()
 		return
@@ -94,6 +96,7 @@ func (s *StoreHandler) UploadFiles(c *gin.Context) {
 		randInt := rand.Int()
 		objectName := fmt.Sprintf("%d/%d_%d%s", randInt, mengerId, time.Now().Unix(), path.Ext(header.Filename))
 		if err = UploadFile(c, category, objectName, header.Size, file); err != nil {
+			log.Error("上传文件失败 err: ", err)
 			app.ServerErrorResponse()
 			return
 		}
@@ -108,7 +111,7 @@ func (s *StoreHandler) UploadFiles(c *gin.Context) {
 	}
 
 	saveStoreInfoRequest := &proto.SaveStoreInfoRequest{StoreInfos: storeInfos}
-	if saveStoreInfoRes, err = s.storeClient.SaveStoreInfo(context.Background(), saveStoreInfoRequest); err != nil {
+	if saveStoreInfoRes, err = s.storeClient.SaveStoreInfo(c, saveStoreInfoRequest); err != nil {
 		log.Error("调用SaveStoreInfo接口失败 err: ", err)
 		app.ServerErrorResponse()
 		return
