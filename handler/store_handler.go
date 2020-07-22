@@ -44,7 +44,6 @@ func (s *StoreHandler) UploadAvatar(c *gin.Context) {
 	}
 	defer file.Close()
 
-
 	mengerId, err := strconv.ParseInt(c.GetHeader("uid"), 10, 64)
 	if err != nil {
 		app.ServerErrorResponse()
@@ -81,6 +80,7 @@ func (s *StoreHandler) UploadFiles(c *gin.Context) {
 
 	mengerId, err := strconv.ParseInt(c.GetHeader("uid"), 10, 64)
 	if err != nil {
+		log.Error("获取用户id失败 err:  ", err)
 		app.ServerErrorResponse()
 		return
 	}
@@ -89,6 +89,7 @@ func (s *StoreHandler) UploadFiles(c *gin.Context) {
 	for _, header := range headers {
 		var file multipart.File
 		if file, err = header.Open(); err != nil {
+			log.Error("上传文件open失败 err: ", err)
 			app.LogicErrorResponse("参数错误")
 			return
 		}
@@ -112,7 +113,7 @@ func (s *StoreHandler) UploadFiles(c *gin.Context) {
 
 	saveStoreInfoRequest := &proto.SaveStoreInfoRequest{StoreInfos: storeInfos}
 	if saveStoreInfoRes, err = s.storeClient.SaveStoreInfo(c, saveStoreInfoRequest); err != nil {
-		log.Error("调用SaveStoreInfo接口失败 err: ", err)
+		log.Error("【store svc】【SaveStoreInfo】调用SaveStoreInfo接口失败 err: ", err)
 		app.ServerErrorResponse()
 		return
 	}
