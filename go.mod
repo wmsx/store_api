@@ -7,7 +7,7 @@ require (
 	github.com/micro/cli/v2 v2.1.2
 	github.com/micro/go-micro/v2 v2.5.0
 	github.com/minio/minio-go/v7 v7.0.1
-	github.com/wmsx/pkg v0.0.0-20200721154220-d35217b41458
+	github.com/wmsx/pkg v0.0.0-20200722160831-4cb77a04c806
 	github.com/wmsx/store_svc v0.0.0-20200721143106-d801144c1fdf
 	github.com/wmsx/xconf v0.0.0-20200721142237-75926266fd1a
 )
