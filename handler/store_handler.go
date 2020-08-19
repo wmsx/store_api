@@ -66,7 +66,6 @@ func (s *StoreHandler) UploadAvatar(c *gin.Context) {
 func (s *StoreHandler) UploadFile(c *gin.Context) {
 	var (
 		err              error
-		formData         *multipart.Form
 		header           *multipart.FileHeader
 		saveStoreInfoRes *proto.SaveStoreInfoResponse
 	)
@@ -77,7 +76,7 @@ func (s *StoreHandler) UploadFile(c *gin.Context) {
 		return
 	}
 
-	category := formData.Value["category"][0]
+	category := c.PostForm("category")
 
 	mengerId, err := strconv.ParseInt(c.GetHeader("uid"), 10, 64)
 	if err != nil {
