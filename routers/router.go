@@ -19,7 +19,7 @@ func InitRouter(c client.Client) *gin.Engine {
 	storeRouter := r.Group("/store")
 
 	storeRouter.POST("/upload/avatar", mygin.AuthWrapper(storeHandler.UploadAvatar))
-	storeRouter.POST("/upload/files", mygin.AuthWrapper(storeHandler.UploadFiles))
+	storeRouter.POST("/upload/file", mygin.AuthWrapper(storeHandler.UploadFile))
 
 	return r
 }
